@@ -1,3 +1,3 @@
 # Codigo_Control
-#Juanangel Martinez
-#Vivian Buelvas
+Juanangel Martinez
+Vivian Buelvas
