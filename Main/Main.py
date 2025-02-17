@@ -12,12 +12,12 @@ w = False
 
 while(w != True):
     print("Bienvenido a DecodeTalker")
-    opcion = int(input("Opciones "
-          "1. Verificacion ISBN-10"
-          "2. Verificacion EAN-13"
-          "3. Verificacion ISIN"
-          "4. Deteminar codigo de control"
-          "5. Salir"))
+    opcion = int(input("Opciones:\n "
+          "1. Verificacion ISBN-10\n "
+          "2. Verificacion EAN-13\n"
+          "3. Verificacion ISIN\n"
+          "4. Deteminar codigo de control\n"
+          "5. Salir\n"))
 
     if (opcion == 1):
         codigo= int(input("Ingrese el Codigo "))
@@ -58,7 +58,7 @@ while(w != True):
                     odd += int(num)
             if (((3 * odd) + even + int(check_bit)) % 10 == 0):  # Check if the algorithm 3 * odd parity + even parity + check bit matches
                 print("Valid EAN 13")
-            else
+            else:
                 print("Invalid EAN 13")
 
     def is_isin(codigo):
@@ -80,4 +80,4 @@ while(w != True):
         else:
             return False
 
-    def resolver(codigo):
+    #def resolver(codigo):
