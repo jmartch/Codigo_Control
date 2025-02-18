@@ -19,6 +19,7 @@ from isbnlib import is_isbn10
 # ...
 # Función para verificar si un código es un EAN-13
 
+# 🔹 Función para verificar si un código es un EAN-13
 def is_ean13(codigo):
     if not codigo.isdigit() or len(codigo) != 13:
         return False
@@ -36,7 +37,7 @@ def is_ean13(codigo):
 
     return ((3 * odd) + even + check_bit) % 10 == 0
 
-
+# 🔹 Función para verificar si un código es un ISIN
 def is_isin(codigo):
     sum = 0
     abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -59,6 +60,60 @@ def is_isin(codigo):
     else:
         return False
 
+# 🔹 Funciones para calcular los dígitos de control
+def calcular_isbn10(codigo):
+    if len(codigo) != 9 or not codigo.isdigit():
+        raise ValueError("El código debe tener 9 dígitos numéricos.")
+
+    suma = sum(int(codigo[i]) * (10 - i) for i in range(9))
+    resto = suma % 11
+    digito_control = 11 - resto
+
+    return 'X' if digito_control == 10 else str(digito_control)
+
+def calcular_ean13(codigo):
+    if len(codigo) != 12 or not codigo.isdigit():
+        raise ValueError("El código debe tener 12 dígitos numéricos.")
+
+    suma = sum(int(codigo[i]) * (3 if i % 2 else 1) for i in range(12))
+    digito_control = (10 - (suma % 10)) % 10
+
+    return str(digito_control)
+
+def calcular_isin(codigo):
+    """Calcula el dígito de control de un código ISIN correctamente"""
+    if len(codigo) != 11:
+        raise ValueError("El código debe tener 11 caracteres.")
+
+    # 🔹 Convertir letras a números (A=10, B=11, ..., Z=35)
+    valores = ""
+    for char in codigo:
+        if char.isdigit():
+            valores += char
+        elif char.isalpha():
+            valores += str(ord(char.upper()) - 55)  # A=10, B=11, ..., Z=35
+        else:
+            raise ValueError("El código ISIN solo debe contener letras y números.")
+
+    # 🔹 Aplicar algoritmo de Luhn
+    valores = list(map(int, valores))  # Convertir la cadena a lista de números
+    valores.reverse()  # Invertir la lista para aplicar Luhn correctamente
+    suma = 0
+
+    for i, num in enumerate(valores):
+        if i % 2 == 0:  # Posiciones pares en la lista invertida (originalmente impares)
+            suma += num
+        else:  # Posiciones impares en la lista invertida (originalmente pares)
+            doble = num * 2
+            suma += doble if doble < 10 else (doble // 10 + doble % 10)
+
+    # 🔹 Obtener el dígito de control
+    digito_control = (10 - (suma % 10)) % 10
+    return str(digito_control)
+
+
+
+# 🔹 Menú principal
 #Variables ciclo iterativo
 w= False
 while not w:
@@ -84,10 +139,35 @@ while not w:
         is_isin(codigo_g)
         print("El código ingresado es un ISIN" if is_isin(codigo) else "El código ingresado NO es un ISIN")
 
+    
     elif opcion == "4":
-        codigo = input("Ingrese el Código a resolver: ")
-        print(f"El dígito de control es: {calcular_digito_control(codigo)}")
+        while True:
+            opcion_codigo = input("Opciones:\n"
+                    "1. Código ISBN-10\n"
+                    "2. Código EAN-13\n"
+                    "3. Código ISIN\n"
+                    "4. Regresar\n")
+        
+            if opcion_codigo == "1":
+                codigo = input("Ingrese los primeros 9 dígitos del ISBN-10: ")
+                print(f"Dígito de control ISBN-10: {calcular_isbn10(codigo)}")
 
+            elif opcion_codigo == "2":
+                codigo = input("Ingrese los primeros 12 dígitos del EAN-13: ")
+                print(f"Dígito de control EAN-13: {calcular_ean13(codigo)}")
+
+            elif opcion_codigo == "3":
+                codigo = input("Ingrese los primeros 11 caracteres del ISIN: ").upper()
+                if len(codigo) != 11:
+                    print("❌ Error: El código ISIN debe tener exactamente 11 caracteres.")
+                else:
+                    print(f"Dígito de control ISIN: {calcular_isin(codigo)}")
+
+            elif opcion_codigo == "4":
+                break  # Regresar al menú principal        
+            else:
+                print("Opción no válida. Intente de nuevo.")
+    
     elif opcion == "5":
         w = True
         print("Gracias por usar DecodeTalker. ¡Hasta luego!")
